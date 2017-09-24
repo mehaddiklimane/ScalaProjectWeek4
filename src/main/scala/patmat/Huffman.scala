@@ -33,14 +33,16 @@ object Huffman {
         case Leaf(char,w) => w
         case Fork(left, right, chars, w) => w
       }
-  
+
+
     def chars(tree: CodeTree): List[Char] =
     // tree match ...
       tree match {
 
         case Leaf(c,w) => List(c)
-        case Fork(left, right, c, w) => c
+        case Fork(left, right, c , w) => c
       }
+
 
   def makeCodeTree(left: CodeTree, right: CodeTree) =
     Fork(left, right, chars(left) ::: chars(right), weight(left) + weight(right))
@@ -131,16 +133,10 @@ object Huffman {
    * If `trees` is a list of less than two elements, that list should be returned
    * unchanged.
    */
-  def combine(trees: List[CodeTree]): List[CodeTree] = {
-
-    if (trees.size<=2)
-      trees
-    else{
-      var first = trees.head
-      var rest = trees.tail
-      var second = rest.head
-      makeCodeTree(first,second)::rest.tail
-    }
+  def combine(trees: List[CodeTree]): List[CodeTree] = trees match {
+    case left :: right :: cs => (makeCodeTree(left, right) :: cs)
+      .sortWith((t1, t2) => weight(t1) < weight(t2))
+    case _ => trees
   }
   
   /**
